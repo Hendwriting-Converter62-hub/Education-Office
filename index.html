@@ -51,8 +51,8 @@
 {
   "imports": {
     "react": "https://esm.sh/react@19.0.0",
-    "react-dom": "https://esm.sh/react-dom@19.0.0?deps=react@19.0.0",
-    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client?deps=react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
     "react/jsx-runtime": "https://esm.sh/react@19.0.0/jsx-runtime",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/"
@@ -60,7 +60,7 @@
 }
 </script>
     <script>
-      // Global error handler for module loading failures
+      // Global error handler
       window.addEventListener('error', function(event) {
         if (event.message && (event.message.includes('import') || event.message.includes('module') || event.message.includes('useState'))) {
           console.error("Critical Runtime Error:", event.error);
