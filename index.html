@@ -53,6 +53,7 @@
     "react": "https://esm.sh/react@19.0.0",
     "react-dom": "https://esm.sh/react-dom@19.0.0?deps=react@19.0.0",
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client?deps=react@19.0.0",
+    "react/jsx-runtime": "https://esm.sh/react@19.0.0/jsx-runtime",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/"
   }
@@ -62,9 +63,17 @@
       // Global error handler for module loading failures
       window.addEventListener('error', function(event) {
         if (event.message && (event.message.includes('import') || event.message.includes('module') || event.message.includes('useState'))) {
+          console.error("Critical Runtime Error:", event.error);
           const root = document.getElementById('root');
           if (root && root.innerHTML.includes('loader')) {
-            root.innerHTML = '<div style="padding: 30px; text-align: center; font-family: sans-serif; color: #721c24; background: #f8d7da; margin: 20px; border-radius: 10px;">মডিউল লোড করতে সমস্যা হচ্ছে। অনুগ্রহ করে পেজটি রিফ্রেশ দিন বা একটি আধুনিক ব্রাউজার ব্যবহার করুন।</div>';
+            root.innerHTML = `
+              <div style="padding: 30px; text-align: center; font-family: sans-serif; color: #721c24; background: #f8d7da; margin: 20px; border-radius: 12px; border: 1px solid #f5c6cb;">
+                <h3 style="margin-top: 0;">অ্যাপ্লিকেশন লোড হতে সমস্যা হয়েছে</h3>
+                <p style="font-size: 14px;">আপনার ব্রাউজারে রিঅ্যাক্ট মডিউলগুলো সঠিকভাবে লোড করা সম্ভব হয়নি।</p>
+                <code style="display: block; background: rgba(0,0,0,0.05); padding: 10px; border-radius: 6px; margin: 10px 0; font-size: 12px; text-align: left;">${event.message}</code>
+                <button onclick="window.location.reload()" style="background: #721c24; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px;">পুনরায় চেষ্টা করুন</button>
+              </div>
+            `;
           }
         }
       });
