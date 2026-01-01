@@ -15,59 +15,56 @@ const App: React.FC = () => {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [schools, setSchools] = useState<School[]>(mockSchools);
   const [upazilas, setUpazilas] = useState<Upazila[]>(mockUpazilas);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Persistence (Simulation)
   useEffect(() => {
-    const savedUsers = localStorage.getItem('edu_users');
-    if (savedUsers) {
-      setUsers(JSON.parse(savedUsers));
-    } else {
-      localStorage.setItem('edu_users', JSON.stringify(mockUsers));
+    try {
+      const savedUsers = localStorage.getItem('edu_users');
+      if (savedUsers) setUsers(JSON.parse(savedUsers));
+
+      const savedSubmissions = localStorage.getItem('edu_submissions');
+      if (savedSubmissions) setSubmissions(JSON.parse(savedSubmissions));
+      
+      const savedForms = localStorage.getItem('edu_forms');
+      if (savedForms) setForms(JSON.parse(savedForms));
+
+      const savedUpazilas = localStorage.getItem('edu_upazilas');
+      if (savedUpazilas) setUpazilas(JSON.parse(savedUpazilas));
+
+      const savedSchools = localStorage.getItem('edu_schools');
+      if (savedSchools) setSchools(JSON.parse(savedSchools));
+
+      const savedUser = localStorage.getItem('edu_current_user');
+      if (savedUser) setCurrentUser(JSON.parse(savedUser));
+    } catch (e) {
+      console.error("Local storage error:", e);
+    } finally {
+      setIsLoading(false);
     }
-
-    const savedSubmissions = localStorage.getItem('edu_submissions');
-    if (savedSubmissions) setSubmissions(JSON.parse(savedSubmissions));
-    
-    const savedForms = localStorage.getItem('edu_forms');
-    if (savedForms) setForms(JSON.parse(savedForms));
-
-    const savedUpazilas = localStorage.getItem('edu_upazilas');
-    if (savedUpazilas) setUpazilas(JSON.parse(savedUpazilas));
-
-    const savedSchools = localStorage.getItem('edu_schools');
-    if (savedSchools) setSchools(JSON.parse(savedSchools));
-
-    const savedUser = localStorage.getItem('edu_current_user');
-    if (savedUser) setCurrentUser(JSON.parse(savedUser));
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('edu_users', JSON.stringify(users));
-  }, [users]);
+    if (!isLoading) localStorage.setItem('edu_users', JSON.stringify(users));
+  }, [users, isLoading]);
 
   useEffect(() => {
-    localStorage.setItem('edu_submissions', JSON.stringify(submissions));
-  }, [submissions]);
+    if (!isLoading) localStorage.setItem('edu_submissions', JSON.stringify(submissions));
+  }, [submissions, isLoading]);
 
   useEffect(() => {
-    localStorage.setItem('edu_forms', JSON.stringify(forms));
-  }, [forms]);
+    if (!isLoading) localStorage.setItem('edu_forms', JSON.stringify(forms));
+  }, [forms, isLoading]);
 
   useEffect(() => {
-    localStorage.setItem('edu_upazilas', JSON.stringify(upazilas));
-  }, [upazilas]);
-
-  useEffect(() => {
-    localStorage.setItem('edu_schools', JSON.stringify(schools));
-  }, [schools]);
-
-  useEffect(() => {
-    if (currentUser) {
-      localStorage.setItem('edu_current_user', JSON.stringify(currentUser));
-    } else {
-      localStorage.removeItem('edu_current_user');
+    if (!isLoading) {
+      if (currentUser) {
+        localStorage.setItem('edu_current_user', JSON.stringify(currentUser));
+      } else {
+        localStorage.removeItem('edu_current_user');
+      }
     }
-  }, [currentUser]);
+  }, [currentUser, isLoading]);
 
   const handleLogin = (email: string, password?: string) => {
     const user = users.find(u => u.email === email || u.mobile === email);
@@ -78,102 +75,45 @@ const App: React.FC = () => {
         alert('ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।');
       }
     } else {
-      alert('ব্যবহারকারী পাওয়া যায়নি! সঠিক ইমেইল অথবা মোবাইল নম্বর দিন।');
+      alert('ব্যবহারকারী পাওয়া যায়নি!');
     }
   };
 
   const handleSignUp = (newUser: User) => {
     if (users.some(u => u.email === newUser.email)) {
-      alert('এই ইমেইল দিয়ে ইতিপূর্বে অ্যাকাউন্ট খোলা হয়েছে।');
+      alert('এই ইমেইল ইতিপূর্বে ব্যবহার করা হয়েছে।');
       return;
     }
-
-    if (newUser.upazilaId && newUser.upazilaId.startsWith('upz-custom-')) {
-      const parts = newUser.upazilaId.split('-');
-      const customName = parts.slice(3).join('-') || 'নতুন উপজেলা';
-      
-      if (!upazilas.some(u => u.id === newUser.upazilaId)) {
-        const newUpazila: Upazila = {
-          id: newUser.upazilaId,
-          name: customName
-        };
-        setUpazilas(prev => [...prev, newUpazila]);
-      }
-    }
-
-    if (newUser.role === UserRole.SCHOOL && newUser.schoolId && newUser.upazilaId) {
-      const newSchool: School = {
-        id: newUser.schoolId,
-        name: newUser.name.includes('স্কুল') ? newUser.name : `${newUser.name} এর বিদ্যালয়`,
-        ipemisCode: '00000000000',
-        upazilaId: newUser.upazilaId
-      };
-      setSchools(prev => [...prev, newSchool]);
-    }
-
     setUsers(prev => [...prev, newUser]);
     setCurrentUser(newUser);
-    alert('অভিনন্দন! আপনার অ্যাকাউন্টটি সফলভাবে তৈরি হয়েছে।');
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
   };
 
-  const handleUpdateProfile = (updatedUser: User, updatedOfficeName?: string, updatedOfficeCode?: string, updatedUpazilaId?: string) => {
+  const handleUpdateProfile = (updatedUser: User) => {
     setCurrentUser(updatedUser);
     setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
-    
-    if (updatedUser.role === UserRole.UPAZILA && updatedOfficeName && updatedUser.upazilaId) {
-      setUpazilas(prev => prev.map(u => 
-        u.id === updatedUser.upazilaId ? { ...u, name: updatedOfficeName } : u
-      ));
-    } else if (updatedUser.role === UserRole.SCHOOL && updatedUser.schoolId) {
-      setSchools(prev => {
-        const schoolExists = prev.some(s => s.id === updatedUser.schoolId);
-        if (schoolExists) {
-          return prev.map(s => {
-            if (s.id === updatedUser.schoolId) {
-              return { 
-                ...s, 
-                name: updatedOfficeName || s.name, 
-                ipemisCode: updatedOfficeCode || s.ipemisCode,
-                upazilaId: updatedUpazilaId || s.upazilaId 
-              };
-            }
-            return s;
-          });
-        } else {
-          const newSch: School = {
-            id: updatedUser.schoolId!,
-            name: updatedOfficeName || 'নতুন বিদ্যালয়',
-            ipemisCode: updatedOfficeCode || '00000000000',
-            upazilaId: updatedUpazilaId || updatedUser.upazilaId || ''
-          };
-          return [...prev, newSch];
-        }
-      });
-      if (updatedUpazilaId) {
-        setCurrentUser(prev => prev ? { ...prev, upazilaId: updatedUpazilaId } : null);
-      }
-    }
   };
 
   const saveSubmission = (submission: Submission) => {
     setSubmissions(prev => {
-      const existingIdx = prev.findIndex(s => s.formId === submission.formId && s.schoolId === submission.schoolId);
-      if (existingIdx > -1) {
+      const idx = prev.findIndex(s => s.formId === submission.formId && s.schoolId === submission.schoolId);
+      if (idx > -1) {
         const next = [...prev];
-        next[existingIdx] = { ...submission, updatedAt: new Date().toISOString() };
+        next[idx] = submission;
         return next;
       }
-      return [...prev, { ...submission, id: `sub-${Date.now()}`, submittedAt: new Date().toISOString(), updatedAt: new Date().toISOString() }];
+      return [...prev, submission];
     });
   };
 
-  const updateSubmissionStatus = (submissionId: string, status: SubmissionStatus) => {
-    setSubmissions(prev => prev.map(s => s.id === submissionId ? { ...s, status, updatedAt: new Date().toISOString() } : s));
+  const updateSubmissionStatus = (id: string, status: SubmissionStatus) => {
+    setSubmissions(prev => prev.map(s => s.id === id ? { ...s, status } : s));
   };
+
+  if (isLoading) return null;
 
   if (!currentUser) {
     return <AuthScreen onLogin={handleLogin} onSignUp={handleSignUp} upazilas={upazilas} />;
@@ -210,7 +150,7 @@ const App: React.FC = () => {
           submissions={submissions}
           schools={schools}
           onUpdateStatus={updateSubmissionStatus}
-          onUpdateSubmission={(sub) => saveSubmission(sub)}
+          onUpdateSubmission={saveSubmission}
         />
       )}
       {currentUser.role === UserRole.SCHOOL && (
