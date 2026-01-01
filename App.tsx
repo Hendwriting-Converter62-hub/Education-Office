@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
-import { User, UserRole, Form, Submission, School, Upazila, SubmissionStatus } from './types';
-import { mockUsers, mockForms, mockSchools, mockUpazilas } from './mockData';
-import Layout from './components/Layout';
-import AdminDashboard from './components/AdminDashboard';
-import UpazilaDashboard from './components/UpazilaDashboard';
-import SchoolDashboard from './components/SchoolDashboard';
-import AuthScreen from './components/AuthScreen';
+import { User, UserRole, Form, Submission, School, Upazila, SubmissionStatus } from './types.ts';
+import { mockUsers, mockForms, mockSchools, mockUpazilas } from './mockData.ts';
+import Layout from './components/Layout.tsx';
+import AdminDashboard from './components/AdminDashboard.tsx';
+import UpazilaDashboard from './components/UpazilaDashboard.tsx';
+import SchoolDashboard from './components/SchoolDashboard.tsx';
+import AuthScreen from './components/AuthScreen.tsx';
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -88,7 +88,6 @@ const App: React.FC = () => {
       return;
     }
 
-    // If a new upazila ID was generated, add it to the upazilas list
     if (newUser.upazilaId && newUser.upazilaId.startsWith('upz-custom-')) {
       const parts = newUser.upazilaId.split('-');
       const customName = parts.slice(3).join('-') || 'নতুন উপজেলা';
@@ -102,15 +101,11 @@ const App: React.FC = () => {
       }
     }
 
-    // If it's a school user, ensure a School object exists so it shows in monitoring
     if (newUser.role === UserRole.SCHOOL && newUser.schoolId && newUser.upazilaId) {
-      // We'll use the user's name as a placeholder for school name initially 
-      // or assume the signup process could be enhanced to provide school name.
-      // For now, let's create a school entry so the Upazila sees it.
       const newSchool: School = {
         id: newUser.schoolId,
         name: newUser.name.includes('স্কুল') ? newUser.name : `${newUser.name} এর বিদ্যালয়`,
-        ipemisCode: '00000000000', // Placeholder, should be updated in profile
+        ipemisCode: '00000000000',
         upazilaId: newUser.upazilaId
       };
       setSchools(prev => [...prev, newSchool]);
