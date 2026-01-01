@@ -48,15 +48,26 @@
         }
     </style>
     <script type="importmap">
-    {
-      "imports": {
-        "react": "https://esm.sh/react@19.0.0",
-        "react-dom": "https://esm.sh/react-dom@19.0.0?deps=react@19.0.0",
-        "react-dom/client": "https://esm.sh/react-dom@19.0.0/client?deps=react@19.0.0",
-        "react/": "https://esm.sh/react@19.0.0/",
-        "react-dom/": "https://esm.sh/react-dom@19.0.0/"
-      }
-    }
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0?deps=react@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client?deps=react@19.0.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+    <script>
+      // Global error handler for module loading failures
+      window.addEventListener('error', function(event) {
+        if (event.message && (event.message.includes('import') || event.message.includes('module'))) {
+          const root = document.getElementById('root');
+          if (root && root.innerHTML.includes('loader')) {
+            root.innerHTML = '<div style="padding: 30px; text-align: center; font-family: sans-serif; color: #721c24; background: #f8d7da; margin: 20px; border-radius: 10px;">মডিউল লোড করতে সমস্যা হচ্ছে। অনুগ্রহ করে পেজটি রিফ্রেশ দিন বা একটি আধুনিক ব্রাউজার ব্যবহার করুন।</div>';
+          }
+        }
+      });
     </script>
 </head>
 <body>
