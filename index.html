@@ -61,7 +61,7 @@
     <script>
       // Global error handler for module loading failures
       window.addEventListener('error', function(event) {
-        if (event.message && (event.message.includes('import') || event.message.includes('module'))) {
+        if (event.message && (event.message.includes('import') || event.message.includes('module') || event.message.includes('useState'))) {
           const root = document.getElementById('root');
           if (root && root.innerHTML.includes('loader')) {
             root.innerHTML = '<div style="padding: 30px; text-align: center; font-family: sans-serif; color: #721c24; background: #f8d7da; margin: 20px; border-radius: 10px;">মডিউল লোড করতে সমস্যা হচ্ছে। অনুগ্রহ করে পেজটি রিফ্রেশ দিন বা একটি আধুনিক ব্রাউজার ব্যবহার করুন।</div>';
