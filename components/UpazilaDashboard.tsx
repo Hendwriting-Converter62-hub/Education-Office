@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { User, Form, Submission, School, SubmissionStatus, FieldType, FormField } from '../types';
+import { User, Form, Submission, School, SubmissionStatus, FieldType, FormField } from '../types.ts';
 
 interface UpazilaDashboardProps {
   user: User;

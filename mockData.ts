@@ -1,5 +1,5 @@
 
-import { UserRole, User, School, Upazila, Form, FieldType } from './types';
+import { UserRole, User, School, Upazila, Form, FieldType } from './types.ts';
 
 export const mockUpazilas: Upazila[] = [
   { id: 'upz-1', name: 'সাভার উপজেলা' },

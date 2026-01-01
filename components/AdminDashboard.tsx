@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { User, UserRole, Form, FieldType, School, Upazila, FormField } from '../types';
+import { User, UserRole, Form, FieldType, School, Upazila, FormField } from '../types.ts';
 
 interface AdminDashboardProps {
   forms: Form[];

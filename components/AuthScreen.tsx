@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { User, UserRole, Upazila } from '../types';
+import { User, UserRole, Upazila } from '../types.ts';
 
 interface AuthScreenProps {
   onLogin: (email: string, password?: string) => void;
@@ -282,19 +282,6 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onSignUp, upazilas }) 
           )}
         </div>
       </div>
-      <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #f1f1f1;
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #10b981;
-          border-radius: 10px;
-        }
-      `}</style>
     </div>
   );
 };

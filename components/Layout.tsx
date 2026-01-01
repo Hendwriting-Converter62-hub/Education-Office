@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { User, UserRole, Upazila } from '../types';
+import { User, UserRole, Upazila } from '../types.ts';
 
 interface LayoutProps {
   user: User;
